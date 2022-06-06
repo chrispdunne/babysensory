@@ -1,0 +1,21 @@
+body {
+  font-family: sans-serif;
+}
+#url_input {
+  margin: 20px;
+  max-width: 500px;
+  position: relative;
+}
+#url_input input {
+  display: block;
+  width: 100%;
+}
+#url_input.valid input {
+  border: 3px solid green;
+}
+#url_input.valid:after {
+  content: "✅";
+  position: absolute;
+  top: 20px;
+  right: 0;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>test video</title>
+		<meta
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+			name="viewport"
+		/>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="./main.css" />
+	</head>
+
+	<body>
+		<div id="url_input">
+			<label
+				>youtube url:
+				<input id="yt_url" />
+				<small>(e.g. <b>youtube.com/watch?v=3KcOZ2qHz5g</b>)</small>
+			</label>
+		</div>
+
+		<audio
+			src="youtube.com/watch?v=3KcOZ2qHz5g"
+			controls
+			preload="metadata"
+			id="yt_audio"
+		></audio>
+
+		<canvas id="canvas"></canvas>
+
+		<script type="module" src="./ui.js?cache=bust"></script>
+	</body>
+</html>
