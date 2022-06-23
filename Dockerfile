@@ -13,4 +13,4 @@ WORKDIR "/app"
 
 RUN npm install
 
-CMD npm test
+CMD npm start
