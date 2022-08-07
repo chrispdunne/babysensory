@@ -75,8 +75,6 @@ export default function analyzer() {
 
 			const tempoCounts = groupNeighborsByTempo(intervalCounts);
 
-			// console.log({ tempoCounts });
-
 			tempoCounts.sort(function (a, b) {
 				return b.count - a.count;
 			});

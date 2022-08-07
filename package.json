@@ -29,6 +29,7 @@
 	"dependencies": {
 		"fluent-ffmpeg": "2.1.2",
 		"node-static": "0.7.11",
+		"realtime-bpm-analyzer": "2.1.6",
 		"save": "2.5.0",
 		"ytdl-core": "4.11.0"
 	},

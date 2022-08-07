@@ -40,6 +40,7 @@ function nearestPowerOf2(n) {
 export function groupNeighborsByTempo(intervalCounts) {
 	var tempoCounts = [];
 	intervalCounts.forEach(function (intervalCount) {
+		console.log({ intervalCount });
 		//Convert an interval to tempo
 		var theoreticalTempo = 44.1 / (intervalCount.interval / 44100);
 		theoreticalTempo = Math.round(theoreticalTempo);
@@ -49,19 +50,19 @@ export function groupNeighborsByTempo(intervalCounts) {
 		// Adjust the tempo to fit within the 90-180 BPM range
 		// while (theoreticalTempo < 90) theoreticalTempo *= 2;
 		// while (theoreticalTempo > 180) theoreticalTempo /= 2;
-		if (theoreticalTempo < 90) {
-			if (theoreticalTempo < 0) {
-				theoreticalTempo = theoreticalTempo * -1;
-			}
-			const ratio = nearestPowerOf2(90 / theoreticalTempo);
-			theoreticalTempo = theoreticalTempo * ratio;
-		}
-		if (theoreticalTempo > 180) {
-			// const diff = theoreticalTempo - 180;
-			const ratio = nearestPowerOf2(theoreticalTempo / 180);
-			// console.log({ ratio });
-			theoreticalTempo = theoreticalTempo / ratio;
-		}
+		// if (theoreticalTempo < 90) {
+		// 	if (theoreticalTempo < 0) {
+		// 		theoreticalTempo = theoreticalTempo * -1;
+		// 	}
+		// 	const ratio = nearestPowerOf2(90 / theoreticalTempo);
+		// 	theoreticalTempo = theoreticalTempo * ratio;
+		// }
+		// if (theoreticalTempo > 180) {
+		// 	// const diff = theoreticalTempo - 180;
+		// 	const ratio = nearestPowerOf2(theoreticalTempo / 180);
+		// 	// console.log({ ratio });
+		// 	theoreticalTempo = theoreticalTempo / ratio;
+		// }
 		theoreticalTempo = theoreticalTempo.toFixed(0);
 		var foundTempo = tempoCounts.some(function (tempoCount) {
 			if (tempoCount.tempo === theoreticalTempo)
