@@ -1,4 +1,4 @@
-export function getPeaksAtThreshold(data, threshold) {
+function getPeaksAtThreshold(data, threshold) {
 	var peaksArray = [];
 	var length = data.length;
 	for (var i = 0; i < length; ) {
@@ -12,7 +12,7 @@ export function getPeaksAtThreshold(data, threshold) {
 	return peaksArray;
 }
 
-export function countIntervalsBetweenNearbyPeaks(peaks) {
+function countIntervalsBetweenNearbyPeaks(peaks) {
 	var intervalCounts = [];
 	peaks.forEach(function (peak, index) {
 		for (var i = 0; i < 10; i++) {
@@ -37,12 +37,11 @@ function nearestPowerOf2(n) {
 	return 1 << (32 - Math.clz32(n));
 }
 
-export function groupNeighborsByTempo(intervalCounts) {
+function groupNeighborsByTempo(intervalCounts) {
 	var tempoCounts = [];
 	intervalCounts.forEach(function (intervalCount) {
-		console.log({ intervalCount });
 		//Convert an interval to tempo
-		var theoreticalTempo = 44.1 / (intervalCount.interval / 44100);
+		var theoreticalTempo = 60 / (intervalCount.interval / 48000);
 		theoreticalTempo = Math.round(theoreticalTempo);
 		if (theoreticalTempo === 0) {
 			return;
@@ -50,20 +49,23 @@ export function groupNeighborsByTempo(intervalCounts) {
 		// Adjust the tempo to fit within the 90-180 BPM range
 		// while (theoreticalTempo < 90) theoreticalTempo *= 2;
 		// while (theoreticalTempo > 180) theoreticalTempo /= 2;
-		// if (theoreticalTempo < 90) {
-		// 	if (theoreticalTempo < 0) {
-		// 		theoreticalTempo = theoreticalTempo * -1;
-		// 	}
-		// 	const ratio = nearestPowerOf2(90 / theoreticalTempo);
-		// 	theoreticalTempo = theoreticalTempo * ratio;
-		// }
-		// if (theoreticalTempo > 180) {
-		// 	// const diff = theoreticalTempo - 180;
-		// 	const ratio = nearestPowerOf2(theoreticalTempo / 180);
-		// 	// console.log({ ratio });
-		// 	theoreticalTempo = theoreticalTempo / ratio;
-		// }
+		if (theoreticalTempo < 0) {
+			theoreticalTempo = theoreticalTempo * -1;
+		}
+		if (theoreticalTempo < 90) {
+			const ratio = nearestPowerOf2(90 / theoreticalTempo);
+			theoreticalTempo = theoreticalTempo * ratio;
+		}
+		if (theoreticalTempo > 180) {
+			// const diff = theoreticalTempo - 180;
+
+			const ratio = nearestPowerOf2(theoreticalTempo / 180);
+			// console.log({ ratio, theoreticalTempo });
+
+			theoreticalTempo = theoreticalTempo / ratio;
+		}
 		theoreticalTempo = theoreticalTempo.toFixed(0);
+
 		var foundTempo = tempoCounts.some(function (tempoCount) {
 			if (tempoCount.tempo === theoreticalTempo)
 				return (tempoCount.count += intervalCount.count);
@@ -77,3 +79,9 @@ export function groupNeighborsByTempo(intervalCounts) {
 	});
 	return tempoCounts;
 }
+
+module.exports = {
+	groupNeighborsByTempo,
+	countIntervalsBetweenNearbyPeaks,
+	getPeaksAtThreshold,
+};

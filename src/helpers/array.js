@@ -1,4 +1,4 @@
-export function arrayMin(arr) {
+function arrayMin(arr) {
 	var len = arr.length,
 		min = Infinity;
 	while (len--) {
@@ -9,7 +9,7 @@ export function arrayMin(arr) {
 	return min;
 }
 
-export function arrayMax(arr) {
+function arrayMax(arr) {
 	var len = arr.length,
 		max = -Infinity;
 	while (len--) {
@@ -19,3 +19,5 @@ export function arrayMax(arr) {
 	}
 	return max;
 }
+
+module.exports = { arrayMin, arrayMax };

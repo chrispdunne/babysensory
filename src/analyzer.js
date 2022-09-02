@@ -1,11 +1,11 @@
-import { arrayMax, arrayMin } from "./helpers/array.js";
-import {
+const { arrayMax, arrayMin } = require("./helpers/array.js");
+const {
 	getPeaksAtThreshold,
 	countIntervalsBetweenNearbyPeaks,
 	groupNeighborsByTempo,
-} from "./helpers/bpm.js";
+} = require("./helpers/bpm.js");
 
-export default function analyzer() {
+function analyzer() {
 	const mainAudio = document.getElementById("yt_audio");
 	mainAudio.addEventListener("play", init);
 
@@ -17,7 +17,9 @@ export default function analyzer() {
 	function init() {
 		const audioCtx = new window.AudioContext();
 		const audioSource = audioCtx.createMediaElementSource(mainAudio);
+
 		const analyser = audioCtx.createAnalyser();
+
 		audioSource.connect(analyser);
 		analyser.connect(audioCtx.destination);
 
@@ -25,7 +27,7 @@ export default function analyzer() {
 		analyser.fftSize = 2048;
 		const bufferLength = analyser.frequencyBinCount; //1024 half of fftSize
 		const dataArray = new Uint8Array(bufferLength);
-		// analyser.getByteTimeDomainData(dataArray);
+
 		const peaks = [];
 		function draw() {
 			const WIDTH = 300;
@@ -34,6 +36,7 @@ export default function analyzer() {
 			const canvasCtx = canvas.getContext("2d");
 
 			analyser.getByteTimeDomainData(dataArray);
+			// analyser.getByteFrequencyData(dataArray);
 
 			canvasCtx.fillStyle = "rgb(0, 10, 10)";
 			canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -68,10 +71,8 @@ export default function analyzer() {
 			if (newPeak) {
 				peaks.push(newPeak);
 			}
-			// console.log({ peaks });
 
 			const intervalCounts = countIntervalsBetweenNearbyPeaks(peaks);
-			// console.log({ intervalCounts });
 
 			const tempoCounts = groupNeighborsByTempo(intervalCounts);
 
@@ -93,3 +94,5 @@ export default function analyzer() {
 		draw();
 	}
 }
+
+module.exports = { analyzer };

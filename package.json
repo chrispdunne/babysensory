@@ -16,9 +16,11 @@
 		"index.d.ts"
 	],
 	"scripts": {
-		"start": "node --unhandled-rejections=strict ./src/index.js",
+		"start": "node --unhandled-rejections=strict ./src/index.js && npm run watch",
 		"test": "node --unhandled-rejections=strict ./test/server.js",
-		"test:ci": "node --unhandled-rejections=strict ./test/ci.js"
+		"test:ci": "node --unhandled-rejections=strict ./test/ci.js",
+		"watch": "watchify ./src/ui.js -o ./src/ui.bundle.js",
+		"build": "browserify ./src/ui.js -o ./src/ui.bundle.js"
 	},
 	"keywords": [
 		"audio",
@@ -27,10 +29,12 @@
 		"streaming"
 	],
 	"dependencies": {
+		"browserify": "17.0.0",
 		"fluent-ffmpeg": "2.1.2",
 		"node-static": "0.7.11",
 		"realtime-bpm-analyzer": "2.1.6",
 		"save": "2.5.0",
+		"watchify": "4.0.0",
 		"ytdl-core": "4.11.0"
 	},
 	"devDependencies": {
