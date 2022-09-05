@@ -30,7 +30,7 @@
 		"fluent-ffmpeg": "2.1.2",
 		"node-static": "0.7.11",
 		"save": "2.5.0",
-		"ytdl-core": "4.11.0"
+		"ytdl-core": "4.11.2"
 	},
 	"devDependencies": {
 		"@types/node": "17.0.35"
