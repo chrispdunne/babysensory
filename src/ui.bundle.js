@@ -1,9 +1,46 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-function ui() {
-	const _threshold = 0.9;
-	const _filterFreq = 300;
-	const _bufferSize = 2048;
+function roundToTwoPlaces(num) {
+	return Math.round((num + Number.EPSILON) * 100) / 100;
+}
 
+function getMinMaxValues(array) {
+	let max = 0;
+	let min = 255;
+	array.forEach((item) => {
+		if (item < min) {
+			min = item;
+		}
+		if (item > max) {
+			max = item;
+		}
+	});
+	return [min, max];
+}
+
+function getPeakDistances(array, sampleRate) {
+	const peaksDistanceArray = [];
+	for (let i = 0; i < array.length; i++) {
+		if (i > 0) {
+			const diff = array[i] - array[i - 1];
+			peaksDistanceArray.push(roundToTwoPlaces(diff / sampleRate));
+		}
+	}
+	return peaksDistanceArray;
+}
+
+function groupPeaks(array) {
+	const group = {};
+	array.forEach((item) => {
+		if (!group[item]) {
+			group[item] = 1;
+		} else {
+			group[item]++;
+		}
+	});
+	return group;
+}
+
+function ui() {
 	const container = document.getElementById("url_input");
 	const _input = document.getElementById("yt_url");
 	const audio = document.getElementById("yt_audio");
@@ -23,24 +60,24 @@ function ui() {
 	});
 
 	_testBox.addEventListener("click", () => {
-		console.log("clicky");
 		init();
 	});
 
 	// stop logic
-	let animationFrameId;
-	let resetMaxMinInterval;
-	const stopDisplay = () => {
-		cancelAnimationFrame(animationFrameId);
-		clearInterval(resetMaxMinInterval);
-	};
+	let getAudioDataInterval;
+	const stopAnalyzer = () => clearInterval(getAudioDataInterval);
 
-	stopBtn.addEventListener("click", stopDisplay);
+	stopBtn.addEventListener("click", stopAnalyzer);
 
 	const init = () => {
 		// setup audio context
 		const audioContext = new AudioContext();
 		const audioSource = audioContext.createMediaElementSource(audio);
+
+		// consts
+		const _threshold = 0.9;
+		const _filterFreq = 300;
+		const _bufferSize = 32768; //@48khz = 0.682666 seconds
 
 		// add low pass filter
 		const loPassFilter = audioContext.createBiquadFilter();
@@ -50,8 +87,8 @@ function ui() {
 
 		// setup analyser
 		const _sampleRate = audioContext.sampleRate; // 48000
+		const _bufferLengthInSec = _bufferSize / _sampleRate; // 42.666ms or ~1/23 of a second
 		const analyser = audioContext.createAnalyser();
-		const bufferLengthInSec = _bufferSize / _sampleRate; // 42.666ms or ~1/23 of a second
 		analyser.fftSize = _bufferSize;
 		audioSource.connect(analyser);
 		analyser.connect(loPassFilter);
@@ -62,59 +99,70 @@ function ui() {
 
 		analyser.getByteTimeDomainData(dataArray);
 
-		var max = 0; //174  ... 196
-		var min = 255; //89 ... 39
-		var getLimit = () => max * _threshold;
-		// after 5 seconds reset max and min
-		// resetMaxMinInterval = setInterval(() => {
-		// 	max = 0;
-		// 	min = 255;
-		// }, 5000);
-
-		var peaksArray = [];
-		var frameCount = 0;
-
-		// display data
-		// each call of display we update the data array with 2048 (buffer size) values of 0 - 255
-		function display() {
-			animationFrameId = requestAnimationFrame(display);
-
-			// update data array
+		const peaksArray = [];
+		let intervalCount = 0;
+		/////////////////////
+		// every (buffer length) seconds get more peaks
+		/////////////////////
+		getAudioDataInterval = setInterval(() => {
 			analyser.getByteTimeDomainData(dataArray);
+			const [min, max] = getMinMaxValues(dataArray);
+			const _minVolumeThreshold = max * _threshold;
+			// loop through data array item
 
-			// loop through data array
-			dataArray.forEach((eightBitValue, i) => {
-				const limit = getLimit();
-				if (eightBitValue > max) {
-					max = eightBitValue;
-				}
-				if (eightBitValue < min) {
-					min = eightBitValue;
-				}
-
+			for (var i = 0; i < dataArray.length; i++) {
+				const eightBitValue = dataArray[i];
 				// do something if audio louder than threshold
-				if (frameCount > 1 && limit > 100 && eightBitValue > limit) {
-					ctx.clearRect(0, 0, canvas.width, canvas.height);
-					// draw a new box
-					ctx.fillStyle = "blue";
-					ctx.fillRect(10, 10, eightBitValue, eightBitValue);
-					// console.log({ max, min });
-
-					peaksArray.push(frameCount * _bufferSize + i);
+				if (
+					_minVolumeThreshold > 100 &&
+					eightBitValue > _minVolumeThreshold
+				) {
+					if (peaksArray.length > 99) {
+						peaksArray.shift();
+					}
+					peaksArray.push(intervalCount * _bufferSize + i);
+					// skip forward 1/4 second (means we're assuming slower than 240bpm)
+					i += _sampleRate / 4;
 				}
-			});
-			frameCount++;
-			console.log({ peaksArray });
-		}
-		display();
+			}
+
+			getBpm();
+			intervalCount++;
+			// console.log({ peaksArray });
+		}, _bufferLengthInSec * 1000);
+
+		/////////////////////
+		// if peaksArray has more than 10 peaks start calc bpm
+		/////////////////////
+		const getBpm = () => {
+			if (peaksArray.length > 10) {
+				const peakDistances = getPeakDistances(peaksArray, _sampleRate);
+				// console.log({ peakDistances });
+				const peakDistanceCounts = groupPeaks(peakDistances);
+				// console.log({ peakDistanceCounts });
+				const mostCommonInterval = Object.keys(
+					peakDistanceCounts
+				).reduce(
+					(acc, curr) =>
+						peakDistanceCounts[curr] > acc ? curr : acc,
+					0
+				);
+				const theoreticalBpm = mostCommonInterval * 60;
+				while (theoreticalBpm > 240) {
+					theoreticalBpm / 2;
+				}
+				while (theoreticalBpm < 60) {
+					theoreticalBpm * 2;
+				}
+				console.log({ theoreticalBpm });
+				// console.log({ mostCommonInterval });
+			}
+		};
 	};
 }
 ui();
 module.exports = {
 	ui,
 };
-
-// use canvas for performance
-// calc peaks
 
 },{}]},{},[1]);
