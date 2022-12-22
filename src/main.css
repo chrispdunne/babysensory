@@ -23,3 +23,9 @@ body {
 	top: 20px;
 	right: 0;
 }
+
+#box {
+	width: 100px;
+	height: 100px;
+	background-color: red;
+}

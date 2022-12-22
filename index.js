@@ -34,7 +34,7 @@ function streamify(uri, opt) {
 	const stream = file ? fs.createWriteStream(file) : new PassThrough();
 	const ffmpeg = new FFmpeg(video);
 	process.nextTick(() => {
-		console.log({ stream });
+		// console.log({ stream });
 		const output = ffmpeg.format(audioFormat).pipe(stream);
 		// console.log({ output });
 		ffmpeg.once("error", (error) => stream.emit("error", error));
