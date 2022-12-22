@@ -32,12 +32,18 @@ function ui() {
 		const audioContext = new AudioContext();
 		const audioSource = audioContext.createMediaElementSource(audio);
 
+		// add low pass filter
+		const loPassFilter = audioContext.createBiquadFilter();
+		loPassFilter.type = "lowpass";
+		loPassFilter.connect(audioContext.destination);
+
 		// setup analyser
 		const analyser = audioContext.createAnalyser();
 		const _fftSize = 2048;
 		analyser.fftSize = _fftSize;
 		audioSource.connect(analyser);
-		analyser.connect(audioContext.destination);
+		analyser.connect(loPassFilter);
+		// analyser.connect(audioContext.destination);
 
 		// creates a an array of 2048 elements that can each be a value from 0 to 255
 		var dataArray = new Uint8Array(_fftSize);
