@@ -1,62 +1,10 @@
-function doubleIfBelowThreshold(num, threshold) {
-	const newNum = num * 2;
-	if (newNum >= threshold) {
-		return newNum;
-	}
-	return doubleIfBelowThreshold(newNum, threshold);
-}
-function halveIfAboveThreshold(num, threshold) {
-	const newNum = num / 2;
-	if (newNum <= threshold) {
-		return newNum;
-	}
-	return halveIfAboveThreshold(newNum, threshold);
-}
-
-function roundToTwoPlaces(num) {
-	return Math.round((num + Number.EPSILON) * 100) / 100;
-}
-
-function roundToThreePlaces(num) {
-	return Math.round((num + Number.EPSILON) * 1000) / 1000;
-}
-
-function getMinMaxValues(array) {
-	let max = 0;
-	let min = 255;
-	array.forEach((item) => {
-		if (item < min) {
-			min = item;
-		}
-		if (item > max) {
-			max = item;
-		}
-	});
-	return [min, max];
-}
-
-function getPeakDistances(array, sampleRate) {
-	const peaksDistanceArray = [];
-	for (let i = 0; i < array.length; i++) {
-		if (i > 0) {
-			const diff = array[i] - array[i - 1];
-			peaksDistanceArray.push(roundToThreePlaces(diff / sampleRate));
-		}
-	}
-	return peaksDistanceArray;
-}
-
-function groupPeaks(array) {
-	const group = {};
-	array.forEach((item) => {
-		if (!group[item]) {
-			group[item] = 1;
-		} else {
-			group[item]++;
-		}
-	});
-	return group;
-}
+import {
+	doubleIfBelowThreshold,
+	halveIfAboveThreshold,
+	getMinMaxValues,
+	getPeakDistances,
+	groupPeaks,
+} from "./helpers.js";
 
 function ui() {
 	const container = document.getElementById("url_input");
@@ -76,6 +24,7 @@ function ui() {
 			container.classList.remove("valid");
 		}
 	});
+	console.log("NOW UPDATED");
 
 	_testBox.addEventListener("click", () => {
 		init();
@@ -201,6 +150,3 @@ function ui() {
 	};
 }
 ui();
-module.exports = {
-	ui,
-};
