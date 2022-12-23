@@ -98,7 +98,7 @@ function ui() {
       container.classList.remove("valid");
     }
   });
-  console.log("NOW UPDATED");
+  console.log("NOW UPDATED v2");
   _testBox.addEventListener("click", function () {
     init();
   });
