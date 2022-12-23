@@ -1,3 +1,18 @@
+function doubleIfBelowThreshold(num, threshold) {
+	const newNum = num * 2;
+	if (newNum >= threshold) {
+		return newNum;
+	}
+	return doubleIfBelowThreshold(newNum, threshold);
+}
+function halveIfAboveThreshold(num, threshold) {
+	const newNum = num / 2;
+	if (newNum <= threshold) {
+		return newNum;
+	}
+	return halveIfAboveThreshold(newNum, threshold);
+}
+
 function roundToTwoPlaces(num) {
 	return Math.round((num + Number.EPSILON) * 100) / 100;
 }
@@ -131,7 +146,7 @@ function ui() {
 		}, _bufferLengthInSec * 1000);
 
 		/////////////////////
-		// if peaksArray has more than 10 peaks start calc bpm
+		// if sampleArray is full we have about 10 seconds of peak data
 		/////////////////////
 		const getBpm = () => {
 			if (peaksArray.length > 10) {
@@ -139,21 +154,43 @@ function ui() {
 				// console.log({ peakDistances });
 				const peakDistanceCounts = groupPeaks(peakDistances);
 				// console.log({ peakDistanceCounts });
-				const mostCommonInterval = Object.keys(
-					peakDistanceCounts
-				).reduce(
-					(acc, curr) =>
-						peakDistanceCounts[curr] > acc ? curr : acc,
-					0
+				const highestPeakCount = Math.max(
+					...Object.values(peakDistanceCounts)
 				);
-				const theoreticalBpm = mostCommonInterval * 60;
-				while (theoreticalBpm > 240) {
-					theoreticalBpm / 2;
+				const mostCommonInterval = Object.keys(peakDistanceCounts).find(
+					(key) => peakDistanceCounts[key] === highestPeakCount
+				);
+				// Object.keys(
+				// 	peakDistanceCounts
+				// ).reduce(
+				// 	(acc, curr) =>
+				// 		peakDistanceCounts[curr] > acc ? curr : acc,
+				// 	0
+				// );
+				console.log({
+					highestPeakCount,
+					peakDistanceCounts,
+					mostCommonInterval,
+				});
+
+				let bpm = (1 / mostCommonInterval) * 60;
+
+				if (bpm > 200) {
+					bpm = halveIfAboveThreshold(bpm, 200);
 				}
-				while (theoreticalBpm < 60) {
-					theoreticalBpm * 2;
+				if (bpm < 90) {
+					bpm = doubleIfBelowThreshold(bpm, 90);
 				}
-				console.log({ theoreticalBpm });
+				console.log({ bpm });
+				// const bpm = doubleIfBelowThreshold(theoreticalBpm, 90);
+
+				// while (theoreticalBpm > 240) {
+				// 	theoreticalBpm / 2;
+				// }
+				// while (theoreticalBpm < 60) {
+				// 	theoreticalBpm * 2;
+				// }
+				// console.log({ bpm, theoreticalBpm });
 				// console.log({ mostCommonInterval });
 			}
 		};

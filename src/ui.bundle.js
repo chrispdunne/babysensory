@@ -1,4 +1,19 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+function doubleIfBelowThreshold(num, threshold) {
+	const newNum = num * 2;
+	if (newNum >= threshold) {
+		return newNum;
+	}
+	return doubleIfBelowThreshold(newNum, threshold);
+}
+function halveIfAboveThreshold(num, threshold) {
+	const newNum = num / 2;
+	if (newNum <= threshold) {
+		return newNum;
+	}
+	return halveIfAboveThreshold(newNum, threshold);
+}
+
 function roundToTwoPlaces(num) {
 	return Math.round((num + Number.EPSILON) * 100) / 100;
 }
@@ -132,7 +147,7 @@ function ui() {
 		}, _bufferLengthInSec * 1000);
 
 		/////////////////////
-		// if peaksArray has more than 10 peaks start calc bpm
+		// if sampleArray is full we have about 10 seconds of peak data
 		/////////////////////
 		const getBpm = () => {
 			if (peaksArray.length > 10) {
@@ -140,21 +155,43 @@ function ui() {
 				// console.log({ peakDistances });
 				const peakDistanceCounts = groupPeaks(peakDistances);
 				// console.log({ peakDistanceCounts });
-				const mostCommonInterval = Object.keys(
-					peakDistanceCounts
-				).reduce(
-					(acc, curr) =>
-						peakDistanceCounts[curr] > acc ? curr : acc,
-					0
+				const highestPeakCount = Math.max(
+					...Object.values(peakDistanceCounts)
 				);
-				const theoreticalBpm = mostCommonInterval * 60;
-				while (theoreticalBpm > 240) {
-					theoreticalBpm / 2;
+				const mostCommonInterval = Object.keys(peakDistanceCounts).find(
+					(key) => peakDistanceCounts[key] === highestPeakCount
+				);
+				// Object.keys(
+				// 	peakDistanceCounts
+				// ).reduce(
+				// 	(acc, curr) =>
+				// 		peakDistanceCounts[curr] > acc ? curr : acc,
+				// 	0
+				// );
+				console.log({
+					highestPeakCount,
+					peakDistanceCounts,
+					mostCommonInterval,
+				});
+
+				let bpm = (1 / mostCommonInterval) * 60;
+
+				if (bpm > 200) {
+					bpm = halveIfAboveThreshold(bpm, 200);
 				}
-				while (theoreticalBpm < 60) {
-					theoreticalBpm * 2;
+				if (bpm < 90) {
+					bpm = doubleIfBelowThreshold(bpm, 90);
 				}
-				console.log({ theoreticalBpm });
+				console.log({ bpm });
+				// const bpm = doubleIfBelowThreshold(theoreticalBpm, 90);
+
+				// while (theoreticalBpm > 240) {
+				// 	theoreticalBpm / 2;
+				// }
+				// while (theoreticalBpm < 60) {
+				// 	theoreticalBpm * 2;
+				// }
+				// console.log({ bpm, theoreticalBpm });
 				// console.log({ mostCommonInterval });
 			}
 		};
