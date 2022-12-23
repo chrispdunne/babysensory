@@ -17,6 +17,10 @@ function roundToTwoPlaces(num) {
 	return Math.round((num + Number.EPSILON) * 100) / 100;
 }
 
+function roundToThreePlaces(num) {
+	return Math.round((num + Number.EPSILON) * 1000) / 1000;
+}
+
 function getMinMaxValues(array) {
 	let max = 0;
 	let min = 255;
@@ -36,7 +40,7 @@ function getPeakDistances(array, sampleRate) {
 	for (let i = 0; i < array.length; i++) {
 		if (i > 0) {
 			const diff = array[i] - array[i - 1];
-			peaksDistanceArray.push(roundToTwoPlaces(diff / sampleRate));
+			peaksDistanceArray.push(roundToThreePlaces(diff / sampleRate));
 		}
 	}
 	return peaksDistanceArray;
@@ -89,8 +93,8 @@ function ui() {
 		const audioSource = audioContext.createMediaElementSource(audio);
 
 		// consts
-		const _threshold = 0.9;
-		const _filterFreq = 300;
+		const _threshold = 0.98;
+		const _filterFreq = 350; // default 350
 		const _bufferSize = 32768; //@48khz = 0.682666 seconds
 
 		// add low pass filter
