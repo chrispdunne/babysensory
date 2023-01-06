@@ -2,7 +2,7 @@ import { Carrot } from "../characters/carrot";
 import { Application, Assets, Sprite } from "pixi.js";
 
 const animate = async () => {
-	console.log("animate pixi . js");
+	console.log("animate pixi . js v2");
 
 	// on init
 	const app = new Application();

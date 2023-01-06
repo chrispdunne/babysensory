@@ -35,6 +35,7 @@ function ui() {
 	stopBtn.addEventListener("click", stopAnalyzer);
 
 	const init = () => {
+		console.log("INIT");
 		// new custom event "peak" which is probably a 1/4 note
 		const peakEvent = new CustomEvent("peak");
 

@@ -28698,7 +28698,7 @@ var animate = /*#__PURE__*/function () {
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          console.log("animate pixi . js");
+          console.log("animate pixi . js v2");
 
           // on init
           app = new _pixi.Application();
@@ -28930,6 +28930,7 @@ function ui() {
   };
   stopBtn.addEventListener("click", stopAnalyzer);
   var init = function init() {
+    console.log("INIT");
     // new custom event "peak" which is probably a 1/4 note
     var peakEvent = new CustomEvent("peak");
 
