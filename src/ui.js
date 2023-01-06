@@ -1,3 +1,4 @@
+import animate from "./animate/index.js";
 import {
 	doubleIfBelowThreshold,
 	halveIfAboveThreshold,
@@ -11,8 +12,6 @@ function ui() {
 	const _input = document.getElementById("yt_url");
 	const audio = document.getElementById("yt_audio");
 	const _testBox = document.getElementById("box");
-	const canvas = document.getElementById("canvas");
-	const ctx = canvas.getContext("2d");
 	const stopBtn = document.getElementById("stop_draw");
 
 	// update youtube link
@@ -59,7 +58,6 @@ function ui() {
 		analyser.fftSize = _bufferSize;
 		audioSource.connect(analyser);
 		analyser.connect(loPassFilter);
-		// analyser.connect(audioContext.destination);
 
 		// creates a an array of 2048 elements that can each be a value from 0 to 255
 		var dataArray = new Uint8Array(_bufferSize);
@@ -95,31 +93,28 @@ function ui() {
 
 			getBpm();
 			intervalCount++;
-			// console.log({ peaksArray });
 		}, _bufferLengthInSec * 1000);
 
 		/////////////////////
-		// if sampleArray is full we have about 10 seconds of peak data
+		// if peaksArray has some values (10 ish) get bpm
 		/////////////////////
 		const getBpm = () => {
 			if (peaksArray.length > 10) {
 				const peakDistances = getPeakDistances(peaksArray, _sampleRate);
-				// console.log({ peakDistances });
+
+				// object - key = peak distance in seconds, value = count
 				const peakDistanceCounts = groupPeaks(peakDistances);
-				// console.log({ peakDistanceCounts });
+
+				// get most common interval count
 				const highestPeakCount = Math.max(
 					...Object.values(peakDistanceCounts)
 				);
+
+				// get most common interval in seconds
 				const mostCommonInterval = Object.keys(peakDistanceCounts).find(
 					(key) => peakDistanceCounts[key] === highestPeakCount
 				);
-				// Object.keys(
-				// 	peakDistanceCounts
-				// ).reduce(
-				// 	(acc, curr) =>
-				// 		peakDistanceCounts[curr] > acc ? curr : acc,
-				// 	0
-				// );
+
 				console.log({
 					highestPeakCount,
 					peakDistanceCounts,
@@ -135,18 +130,11 @@ function ui() {
 					bpm = doubleIfBelowThreshold(bpm, 90);
 				}
 				console.log({ bpm });
-				// const bpm = doubleIfBelowThreshold(theoreticalBpm, 90);
-
-				// while (theoreticalBpm > 240) {
-				// 	theoreticalBpm / 2;
-				// }
-				// while (theoreticalBpm < 60) {
-				// 	theoreticalBpm * 2;
-				// }
-				// console.log({ bpm, theoreticalBpm });
-				// console.log({ mostCommonInterval });
+				window.bpm = bpm;
 			}
 		};
+
+		animate();
 	};
 }
 ui();

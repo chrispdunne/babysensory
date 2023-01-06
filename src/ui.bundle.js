@@ -4,6 +4,97 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports["default"] = animate;
+var _carrot = require("../characters/carrot");
+function animate() {
+  // on init
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  var carrot = new _carrot.Carrot();
+  console.log({
+    carrot: carrot
+  });
+
+  // rarely (every 8 or 16 bars?)
+
+  //// remove any existing characters
+  //// animate off screen for 1 or 2 bars,
+  //// then remove from canvas
+
+  //// either add multiple unique character types or multiple instances of the same character type
+  //// of between 1 and 6 characters
+
+  // often (every 1 or 2 bars?)
+  // trigger a dance for characters
+}
+
+},{"../characters/carrot":2}],2:[function(require,module,exports){
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Carrot = void 0;
+var _ = require("./");
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var Carrot = /*#__PURE__*/function (_Character) {
+  _inherits(Carrot, _Character);
+  var _super = _createSuper(Carrot);
+  function Carrot() {
+    _classCallCheck(this, Carrot);
+    return _super.call(this, "carrot");
+  }
+  return _createClass(Carrot);
+}(_.Character);
+exports.Carrot = Carrot;
+
+},{"./":3}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Character = void 0;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+var Character = /*#__PURE__*/function () {
+  function Character(name) {
+    _classCallCheck(this, Character);
+    this.age = 0;
+    this.name = name;
+  }
+  _createClass(Character, [{
+    key: "updateAge",
+    value: function updateAge(age) {
+      this.age += age;
+    }
+  }]);
+  return Character;
+}();
+exports.Character = Character;
+
+},{}],4:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.doubleIfBelowThreshold = doubleIfBelowThreshold;
 exports.getMinMaxValues = getMinMaxValues;
 exports.getPeakDistances = getPeakDistances;
@@ -66,10 +157,12 @@ function groupPeaks(array) {
   return group;
 }
 
-},{}],2:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
+var _index = _interopRequireDefault(require("./animate/index.js"));
 var _helpers = require("./helpers.js");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
@@ -85,8 +178,6 @@ function ui() {
   var _input = document.getElementById("yt_url");
   var audio = document.getElementById("yt_audio");
   var _testBox = document.getElementById("box");
-  var canvas = document.getElementById("canvas");
-  var ctx = canvas.getContext("2d");
   var stopBtn = document.getElementById("stop_draw");
 
   // update youtube link
@@ -132,7 +223,6 @@ function ui() {
     analyser.fftSize = _bufferSize;
     audioSource.connect(analyser);
     analyser.connect(loPassFilter);
-    // analyser.connect(audioContext.destination);
 
     // creates a an array of 2048 elements that can each be a value from 0 to 255
     var dataArray = new Uint8Array(_bufferSize);
@@ -165,29 +255,25 @@ function ui() {
       }
       getBpm();
       intervalCount++;
-      // console.log({ peaksArray });
     }, _bufferLengthInSec * 1000);
 
     /////////////////////
-    // if sampleArray is full we have about 10 seconds of peak data
+    // if peaksArray has some values (10 ish) get bpm
     /////////////////////
     var getBpm = function getBpm() {
       if (peaksArray.length > 10) {
         var peakDistances = (0, _helpers.getPeakDistances)(peaksArray, _sampleRate);
-        // console.log({ peakDistances });
+
+        // object - key = peak distance in seconds, value = count
         var peakDistanceCounts = (0, _helpers.groupPeaks)(peakDistances);
-        // console.log({ peakDistanceCounts });
+
+        // get most common interval count
         var highestPeakCount = Math.max.apply(Math, _toConsumableArray(Object.values(peakDistanceCounts)));
+
+        // get most common interval in seconds
         var mostCommonInterval = Object.keys(peakDistanceCounts).find(function (key) {
           return peakDistanceCounts[key] === highestPeakCount;
         });
-        // Object.keys(
-        // 	peakDistanceCounts
-        // ).reduce(
-        // 	(acc, curr) =>
-        // 		peakDistanceCounts[curr] > acc ? curr : acc,
-        // 	0
-        // );
         console.log({
           highestPeakCount: highestPeakCount,
           peakDistanceCounts: peakDistanceCounts,
@@ -203,21 +289,12 @@ function ui() {
         console.log({
           bpm: bpm
         });
-        // const bpm = doubleIfBelowThreshold(theoreticalBpm, 90);
-
-        // while (theoreticalBpm > 240) {
-        // 	theoreticalBpm / 2;
-        // }
-        // while (theoreticalBpm < 60) {
-        // 	theoreticalBpm * 2;
-        // }
-        // console.log({ bpm, theoreticalBpm });
-        // console.log({ mostCommonInterval });
+        window.bpm = bpm;
       }
     };
+    (0, _index["default"])();
   };
 }
-
 ui();
 
-},{"./helpers.js":1}]},{},[2]);
+},{"./animate/index.js":1,"./helpers.js":4}]},{},[5]);
