@@ -1,7 +1,7 @@
 import { Carrot } from "../characters/carrot";
 import { Application, Assets, Sprite } from "pixi.js";
 
-const animate = async (peakEvent) => {
+const animate = async () => {
 	console.log("animate pixi . js");
 
 	// on init

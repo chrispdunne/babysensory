@@ -11,7 +11,6 @@ function ui() {
 	const container = document.getElementById("url_input");
 	const _input = document.getElementById("yt_url");
 	const audio = document.getElementById("yt_audio");
-	const _testBox = document.getElementById("box");
 	const stopBtn = document.getElementById("stop_draw");
 
 	// update youtube link
@@ -25,7 +24,7 @@ function ui() {
 	});
 	console.log("NOW UPDATED v3");
 
-	_testBox.addEventListener("click", () => {
+	audio.addEventListener("play", () => {
 		init();
 	});
 
@@ -48,19 +47,21 @@ function ui() {
 		const _filterFreq = 350; // default 350
 		const _bufferSize = 32768; //@48khz = 0.682666 seconds
 
-		// add low pass filter
-		const loPassFilter = audioContext.createBiquadFilter();
-		loPassFilter.type = "lowpass";
-		loPassFilter.frequency.value = _filterFreq;
-		loPassFilter.connect(audioContext.destination);
-
 		// setup analyser
 		const _sampleRate = audioContext.sampleRate; // 48000
 		const _bufferLengthInSec = _bufferSize / _sampleRate; // 42.666ms or ~1/23 of a second
 		const analyser = audioContext.createAnalyser();
 		analyser.fftSize = _bufferSize;
-		audioSource.connect(analyser);
-		analyser.connect(loPassFilter);
+		// audioSource.connect(analyser); // send audio from source to analyzer
+
+		// add low pass filter
+		const loPassFilter = audioContext.createBiquadFilter();
+		loPassFilter.type = "lowpass";
+		loPassFilter.frequency.value = _filterFreq;
+		audioSource.connect(loPassFilter); // send audio to filter
+		loPassFilter.connect(analyser); // send filter to analyzer
+
+		audioSource.connect(audioContext.destination); // send unaffected audio source to speakers
 
 		// creates an array of [_bufferSize] elements that can each be a value from 0 to 255
 		var dataArray = new Uint8Array(_bufferSize);
@@ -69,6 +70,7 @@ function ui() {
 
 		const peaksArray = [];
 		let intervalCount = 0;
+
 		/////////////////////
 		// every (buffer length) seconds get more peaks
 		/////////////////////
@@ -138,7 +140,7 @@ function ui() {
 			}
 		};
 
-		animate(peakEvent);
+		animate();
 	};
 }
 ui();

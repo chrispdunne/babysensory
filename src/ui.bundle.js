@@ -28693,7 +28693,7 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 var animate = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(peakEvent) {
+  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
     var app, texture, lemon;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
@@ -28751,7 +28751,7 @@ var animate = /*#__PURE__*/function () {
       }
     }, _callee);
   }));
-  return function animate(_x) {
+  return function animate() {
     return _ref.apply(this, arguments);
   };
 }();
@@ -28907,7 +28907,6 @@ function ui() {
   var container = document.getElementById("url_input");
   var _input = document.getElementById("yt_url");
   var audio = document.getElementById("yt_audio");
-  var _testBox = document.getElementById("box");
   var stopBtn = document.getElementById("stop_draw");
 
   // update youtube link
@@ -28920,7 +28919,7 @@ function ui() {
     }
   });
   console.log("NOW UPDATED v3");
-  _testBox.addEventListener("click", function () {
+  audio.addEventListener("play", function () {
     init();
   });
 
@@ -28943,25 +28942,28 @@ function ui() {
     var _filterFreq = 350; // default 350
     var _bufferSize = 32768; //@48khz = 0.682666 seconds
 
-    // add low pass filter
-    var loPassFilter = audioContext.createBiquadFilter();
-    loPassFilter.type = "lowpass";
-    loPassFilter.frequency.value = _filterFreq;
-    loPassFilter.connect(audioContext.destination);
-
     // setup analyser
     var _sampleRate = audioContext.sampleRate; // 48000
     var _bufferLengthInSec = _bufferSize / _sampleRate; // 42.666ms or ~1/23 of a second
     var analyser = audioContext.createAnalyser();
     analyser.fftSize = _bufferSize;
-    audioSource.connect(analyser);
-    analyser.connect(loPassFilter);
+    // audioSource.connect(analyser); // send audio from source to analyzer
+
+    // add low pass filter
+    var loPassFilter = audioContext.createBiquadFilter();
+    loPassFilter.type = "lowpass";
+    loPassFilter.frequency.value = _filterFreq;
+    audioSource.connect(loPassFilter); // send audio to filter
+    loPassFilter.connect(analyser); // send filter to analyzer
+
+    audioSource.connect(audioContext.destination); // send unaffected audio source to speakers
 
     // creates an array of [_bufferSize] elements that can each be a value from 0 to 255
     var dataArray = new Uint8Array(_bufferSize);
     analyser.getByteTimeDomainData(dataArray);
     var peaksArray = [];
     var intervalCount = 0;
+
     /////////////////////
     // every (buffer length) seconds get more peaks
     /////////////////////
@@ -29026,7 +29028,7 @@ function ui() {
         window.bpm = bpm;
       }
     };
-    (0, _index["default"])(peakEvent);
+    (0, _index["default"])();
   };
 }
 ui();
