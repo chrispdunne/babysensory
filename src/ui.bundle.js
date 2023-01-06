@@ -28908,6 +28908,7 @@ function ui() {
   var _input = document.getElementById("yt_url");
   var audio = document.getElementById("yt_audio");
   var stopBtn = document.getElementById("stop_draw");
+  var bpmDisplay = document.getElementById("bpm");
 
   // update youtube link
   _input.addEventListener("keyup", function (e) {
@@ -28957,7 +28958,13 @@ function ui() {
     audioSource.connect(loPassFilter); // send audio to filter
     loPassFilter.connect(analyser); // send filter to analyzer
 
-    audioSource.connect(audioContext.destination); // send unaffected audio source to speakers
+    // delay audio output by buffer length
+    var delay = audioContext.createDelay(10);
+    delay.delayTime.value = _bufferLengthInSec;
+    audioSource.connect(delay); // send audio to delay
+    delay.connect(audioContext.destination); // send delayed audio to speakers
+
+    // audioSource.connect(audioContext.destination); // send unaffected audio source to speakers
 
     // creates an array of [_bufferSize] elements that can each be a value from 0 to 255
     var dataArray = new Uint8Array(_bufferSize);
@@ -29027,6 +29034,7 @@ function ui() {
         }
         // console.log({ bpm });
         window.bpm = bpm;
+        bpmDisplay.innerHTML = bpm.toFixed(2);
       }
     };
     (0, _index["default"])();
