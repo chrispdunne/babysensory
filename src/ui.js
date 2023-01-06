@@ -23,7 +23,7 @@ function ui() {
 			container.classList.remove("valid");
 		}
 	});
-	console.log("NOW UPDATED v2");
+	console.log("NOW UPDATED v3");
 
 	_testBox.addEventListener("click", () => {
 		init();
@@ -36,6 +36,9 @@ function ui() {
 	stopBtn.addEventListener("click", stopAnalyzer);
 
 	const init = () => {
+		// new custom event "peak" which is probably a 1/4 note
+		const peakEvent = new CustomEvent("peak");
+
 		// setup audio context
 		const audioContext = new AudioContext();
 		const audioSource = audioContext.createMediaElementSource(audio);
@@ -59,7 +62,7 @@ function ui() {
 		audioSource.connect(analyser);
 		analyser.connect(loPassFilter);
 
-		// creates a an array of 2048 elements that can each be a value from 0 to 255
+		// creates an array of [_bufferSize] elements that can each be a value from 0 to 255
 		var dataArray = new Uint8Array(_bufferSize);
 
 		analyser.getByteTimeDomainData(dataArray);
@@ -82,6 +85,7 @@ function ui() {
 					_minVolumeThreshold > 100 &&
 					eightBitValue > _minVolumeThreshold
 				) {
+					document.dispatchEvent(peakEvent);
 					if (peaksArray.length > 99) {
 						peaksArray.shift();
 					}
@@ -115,11 +119,11 @@ function ui() {
 					(key) => peakDistanceCounts[key] === highestPeakCount
 				);
 
-				console.log({
-					highestPeakCount,
-					peakDistanceCounts,
-					mostCommonInterval,
-				});
+				// console.log({
+				// 	highestPeakCount,
+				// 	peakDistanceCounts,
+				// 	mostCommonInterval,
+				// });
 
 				let bpm = (1 / mostCommonInterval) * 60;
 
@@ -129,12 +133,12 @@ function ui() {
 				if (bpm < 90) {
 					bpm = doubleIfBelowThreshold(bpm, 90);
 				}
-				console.log({ bpm });
+				// console.log({ bpm });
 				window.bpm = bpm;
 			}
 		};
 
-		animate();
+		animate(peakEvent);
 	};
 }
 ui();

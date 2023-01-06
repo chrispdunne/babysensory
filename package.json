@@ -34,6 +34,7 @@
 		"browserify": "17.0.0",
 		"fluent-ffmpeg": "2.1.2",
 		"node-static": "0.7.11",
+		"pixi.js": "7.0.5",
 		"save": "2.9.0",
 		"watchify": "4.0.0",
 		"ytdl-core": "4.11.2"
