@@ -28718,12 +28718,6 @@ var animate = /*#__PURE__*/function () {
           // });
           document.addEventListener("peak", function (e) {
             var _window$bpm;
-            console.log("peak!", {
-              e: e
-            });
-            console.log({
-              lemon: lemon
-            });
             lemon.x -= 44;
             lemon.y -= 44;
             var beatLength = 60 / ((_window$bpm = window.bpm) !== null && _window$bpm !== void 0 ? _window$bpm : 120) * 1000;
@@ -28866,22 +28860,30 @@ function getMinMaxValues(array) {
   return [min, max];
 }
 function getPeakDistances(array, sampleRate) {
+  // offset is in frames aka samples
   var peaksDistanceArray = [];
   for (var i = 0; i < array.length; i++) {
     if (i > 0) {
       var diff = array[i] - array[i - 1];
-      peaksDistanceArray.push(roundToThreePlaces(diff / sampleRate));
+      peaksDistanceArray.push({
+        interval: roundToThreePlaces(diff / sampleRate),
+        // distance from previous peak in seconds
+        location: roundToThreePlaces(array[i] / sampleRate) // location in peaks array
+      });
     }
   }
+
   return peaksDistanceArray;
 }
 function groupPeaks(array) {
   var group = {};
   array.forEach(function (item) {
-    if (!group[item]) {
-      group[item] = 1;
+    var interval = item.interval;
+    if (!group[interval]) {
+      // ex item = {interval: 0.5, location: 23}
+      group[interval] = [item];
     } else {
-      group[item]++;
+      group[interval].push(item);
     }
   });
   return group;
@@ -28904,11 +28906,22 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function ui() {
+  // consts
+  var _threshold = 0.98;
+  var _filterFreq = 350; // default 350
+  var _bufferSize = 32768; // @48khz = 0.682666 seconds
+
+  // els
   var container = document.getElementById("url_input");
   var _input = document.getElementById("yt_url");
   var audio = document.getElementById("yt_audio");
-  var stopBtn = document.getElementById("stop_draw");
   var bpmDisplay = document.getElementById("bpm");
+  var _isInit = false;
+  var audioContext;
+  var audioSource;
+  var analyser;
+  var _sampleRate;
+  var _bufferLengthInSec;
 
   // update youtube link
   _input.addEventListener("keyup", function (e) {
@@ -28922,6 +28935,7 @@ function ui() {
   console.log("NOW UPDATED v3");
   audio.addEventListener("play", function () {
     init();
+    RENAME_ME();
   });
 
   // stop logic
@@ -28929,25 +28943,22 @@ function ui() {
   var stopAnalyzer = function stopAnalyzer() {
     return clearInterval(getAudioDataInterval);
   };
-  stopBtn.addEventListener("click", stopAnalyzer);
+  audio.addEventListener("pause", function () {
+    return stopAnalyzer();
+  });
   var init = function init() {
+    if (_isInit) return;
+    // setup audio context
+    audioContext = new AudioContext();
+    audioSource = audioContext.createMediaElementSource(audio);
     console.log("INIT");
     // new custom event "peak" which is probably a 1/4 note
     var peakEvent = new CustomEvent("peak");
 
-    // setup audio context
-    var audioContext = new AudioContext();
-    var audioSource = audioContext.createMediaElementSource(audio);
-
-    // consts
-    var _threshold = 0.98;
-    var _filterFreq = 350; // default 350
-    var _bufferSize = 32768; //@48khz = 0.682666 seconds
-
     // setup analyser
-    var _sampleRate = audioContext.sampleRate; // 48000
-    var _bufferLengthInSec = _bufferSize / _sampleRate; // 42.666ms or ~1/23 of a second
-    var analyser = audioContext.createAnalyser();
+    _sampleRate = audioContext.sampleRate; // 48000
+    _bufferLengthInSec = _bufferSize / _sampleRate; // 42.666ms or ~1/23 of a second
+    analyser = audioContext.createAnalyser();
     analyser.fftSize = _bufferSize;
     // audioSource.connect(analyser); // send audio from source to analyzer
 
@@ -28964,6 +28975,9 @@ function ui() {
     audioSource.connect(delay); // send audio to delay
     delay.connect(audioContext.destination); // send delayed audio to speakers
 
+    _isInit = true;
+  };
+  var RENAME_ME = function RENAME_ME() {
     // audioSource.connect(audioContext.destination); // send unaffected audio source to speakers
 
     // creates an array of [_bufferSize] elements that can each be a value from 0 to 255
@@ -28971,6 +28985,7 @@ function ui() {
     analyser.getByteTimeDomainData(dataArray);
     var peaksArray = [];
     var intervalCount = 0;
+    var mostCommonInterval;
 
     /////////////////////
     // every (buffer length) seconds get more peaks
@@ -28986,9 +29001,10 @@ function ui() {
 
       for (var i = 0; i < dataArray.length; i++) {
         var eightBitValue = dataArray[i];
+
         // do something if audio louder than threshold
         if (_minVolumeThreshold > 100 && eightBitValue > _minVolumeThreshold) {
-          document.dispatchEvent(peakEvent);
+          // document.dispatchEvent(peakEvent);
           if (peaksArray.length > 99) {
             peaksArray.shift();
           }
@@ -29009,22 +29025,30 @@ function ui() {
         var peakDistances = (0, _helpers.getPeakDistances)(peaksArray, _sampleRate);
 
         // object - key = peak distance in seconds, value = count
+        // e.g. { 0.5: [23, 32], 0.25: [12], 0.75: [34] } key: seconds, value: count
         var peakDistanceCounts = (0, _helpers.groupPeaks)(peakDistances);
 
         // get most common interval count
-        var highestPeakCount = Math.max.apply(Math, _toConsumableArray(Object.values(peakDistanceCounts)));
+        var highestPeakCount = Math.max.apply(Math, _toConsumableArray(Object.values(peakDistanceCounts).map(function (array) {
+          return array.length;
+        })));
 
         // get most common interval in seconds
-        var mostCommonInterval = Object.keys(peakDistanceCounts).find(function (key) {
-          return peakDistanceCounts[key] === highestPeakCount;
+        mostCommonInterval = Object.keys(peakDistanceCounts).find(function (key) {
+          return peakDistanceCounts[key].length === highestPeakCount;
         });
+        var getPeakLocations = function getPeakLocations() {
+          return peakDistanceCounts[mostCommonInterval].map(function (item) {
+            return item.location;
+          } // get peak location in seconds since start
+          );
+        };
 
         // console.log({
-        // 	highestPeakCount,
-        // 	peakDistanceCounts,
         // 	mostCommonInterval,
+        // 	pl: getPeakLocations(),
         // });
-
+        window.bs_peaks = getPeakLocations();
         var bpm = 1 / mostCommonInterval * 60;
         if (bpm > 200) {
           bpm = (0, _helpers.halveIfAboveThreshold)(bpm, 200);
@@ -29032,8 +29056,7 @@ function ui() {
         if (bpm < 90) {
           bpm = (0, _helpers.doubleIfBelowThreshold)(bpm, 90);
         }
-        // console.log({ bpm });
-        window.bpm = bpm;
+        window.bs_bpm = bpm;
         bpmDisplay.innerHTML = bpm.toFixed(2);
       }
     };

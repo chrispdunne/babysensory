@@ -8,11 +8,24 @@ import {
 } from "./helpers.js";
 
 function ui() {
+	// consts
+	const _threshold = 0.98;
+	const _filterFreq = 350; // default 350
+	const _bufferSize = 32768; // @48khz = 0.682666 seconds
+
+	// els
 	const container = document.getElementById("url_input");
 	const _input = document.getElementById("yt_url");
 	const audio = document.getElementById("yt_audio");
-	const stopBtn = document.getElementById("stop_draw");
 	const bpmDisplay = document.getElementById("bpm");
+
+	let _isInit = false;
+	let audioContext;
+	let audioSource;
+	let analyser;
+
+	let _sampleRate;
+	let _bufferLengthInSec;
 
 	// update youtube link
 	_input.addEventListener("keyup", (e) => {
@@ -27,32 +40,28 @@ function ui() {
 
 	audio.addEventListener("play", () => {
 		init();
+		RENAME_ME();
 	});
 
 	// stop logic
 	let getAudioDataInterval;
 	const stopAnalyzer = () => clearInterval(getAudioDataInterval);
-
-	stopBtn.addEventListener("click", stopAnalyzer);
+	audio.addEventListener("pause", () => stopAnalyzer());
 
 	const init = () => {
+		if (_isInit) return;
+		// setup audio context
+		audioContext = new AudioContext();
+		audioSource = audioContext.createMediaElementSource(audio);
+
 		console.log("INIT");
 		// new custom event "peak" which is probably a 1/4 note
 		const peakEvent = new CustomEvent("peak");
 
-		// setup audio context
-		const audioContext = new AudioContext();
-		const audioSource = audioContext.createMediaElementSource(audio);
-
-		// consts
-		const _threshold = 0.98;
-		const _filterFreq = 350; // default 350
-		const _bufferSize = 32768; //@48khz = 0.682666 seconds
-
 		// setup analyser
-		const _sampleRate = audioContext.sampleRate; // 48000
-		const _bufferLengthInSec = _bufferSize / _sampleRate; // 42.666ms or ~1/23 of a second
-		const analyser = audioContext.createAnalyser();
+		_sampleRate = audioContext.sampleRate; // 48000
+		_bufferLengthInSec = _bufferSize / _sampleRate; // 42.666ms or ~1/23 of a second
+		analyser = audioContext.createAnalyser();
 		analyser.fftSize = _bufferSize;
 		// audioSource.connect(analyser); // send audio from source to analyzer
 
@@ -69,6 +78,10 @@ function ui() {
 		audioSource.connect(delay); // send audio to delay
 		delay.connect(audioContext.destination); // send delayed audio to speakers
 
+		_isInit = true;
+	};
+
+	const RENAME_ME = () => {
 		// audioSource.connect(audioContext.destination); // send unaffected audio source to speakers
 
 		// creates an array of [_bufferSize] elements that can each be a value from 0 to 255
@@ -78,6 +91,7 @@ function ui() {
 
 		const peaksArray = [];
 		let intervalCount = 0;
+		let mostCommonInterval;
 
 		/////////////////////
 		// every (buffer length) seconds get more peaks
@@ -90,12 +104,13 @@ function ui() {
 
 			for (var i = 0; i < dataArray.length; i++) {
 				const eightBitValue = dataArray[i];
+
 				// do something if audio louder than threshold
 				if (
 					_minVolumeThreshold > 100 &&
 					eightBitValue > _minVolumeThreshold
 				) {
-					document.dispatchEvent(peakEvent);
+					// document.dispatchEvent(peakEvent);
 					if (peaksArray.length > 99) {
 						peaksArray.shift();
 					}
@@ -117,23 +132,31 @@ function ui() {
 				const peakDistances = getPeakDistances(peaksArray, _sampleRate);
 
 				// object - key = peak distance in seconds, value = count
+				// e.g. { 0.5: [23, 32], 0.25: [12], 0.75: [34] } key: seconds, value: count
 				const peakDistanceCounts = groupPeaks(peakDistances);
 
 				// get most common interval count
 				const highestPeakCount = Math.max(
-					...Object.values(peakDistanceCounts)
+					...Object.values(peakDistanceCounts).map(
+						(array) => array.length
+					)
 				);
 
 				// get most common interval in seconds
-				const mostCommonInterval = Object.keys(peakDistanceCounts).find(
-					(key) => peakDistanceCounts[key] === highestPeakCount
+				mostCommonInterval = Object.keys(peakDistanceCounts).find(
+					(key) => peakDistanceCounts[key].length === highestPeakCount
 				);
 
+				const getPeakLocations = () =>
+					peakDistanceCounts[mostCommonInterval].map(
+						(item) => item.location // get peak location in seconds since start
+					);
+
 				// console.log({
-				// 	highestPeakCount,
-				// 	peakDistanceCounts,
 				// 	mostCommonInterval,
+				// 	pl: getPeakLocations(),
 				// });
+				window.bs_peaks = getPeakLocations();
 
 				let bpm = (1 / mostCommonInterval) * 60;
 
@@ -143,8 +166,8 @@ function ui() {
 				if (bpm < 90) {
 					bpm = doubleIfBelowThreshold(bpm, 90);
 				}
-				// console.log({ bpm });
-				window.bpm = bpm;
+
+				window.bs_bpm = bpm;
 				bpmDisplay.innerHTML = bpm.toFixed(2);
 			}
 		};

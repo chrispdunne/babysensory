@@ -22,8 +22,6 @@ const animate = async () => {
 
 	// });
 	document.addEventListener("peak", (e) => {
-		console.log("peak!", { e });
-		console.log({ lemon });
 		lemon.x -= 44;
 		lemon.y -= 44;
 		const beatLength = (60 / (window.bpm ?? 120)) * 1000;

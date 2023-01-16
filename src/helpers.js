@@ -36,11 +36,15 @@ export function getMinMaxValues(array) {
 }
 
 export function getPeakDistances(array, sampleRate) {
+	// offset is in frames aka samples
 	const peaksDistanceArray = [];
 	for (let i = 0; i < array.length; i++) {
 		if (i > 0) {
 			const diff = array[i] - array[i - 1];
-			peaksDistanceArray.push(roundToThreePlaces(diff / sampleRate));
+			peaksDistanceArray.push({
+				interval: roundToThreePlaces(diff / sampleRate), // distance from previous peak in seconds
+				location: roundToThreePlaces(array[i] / sampleRate), // location in peaks array
+			});
 		}
 	}
 	return peaksDistanceArray;
@@ -49,10 +53,12 @@ export function getPeakDistances(array, sampleRate) {
 export function groupPeaks(array) {
 	const group = {};
 	array.forEach((item) => {
-		if (!group[item]) {
-			group[item] = 1;
+		const { interval } = item;
+		if (!group[interval]) {
+			// ex item = {interval: 0.5, location: 23}
+			group[interval] = [item];
 		} else {
-			group[item]++;
+			group[interval].push(item);
 		}
 	});
 	return group;
