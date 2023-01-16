@@ -13,6 +13,7 @@ var file = new nodeStatic.Server(__dirname, {
 });
 
 function youtubeServer(req, res) {
+	const requestUrl = String(req.url);
 	if (req.url === "/") {
 		return fs
 			.createReadStream(path.join(__dirname, "/index.html"))
@@ -21,7 +22,12 @@ function youtubeServer(req, res) {
 		res.end("pong");
 	} else if (/youtube/.test(req.url)) {
 		stream("http:/" + req.url).pipe(res);
+	} else if (requestUrl.includes("dist")) {
+		const distPath = path.join(__dirname, "..", requestUrl);
+		console.log(distPath);
+		return fs.createReadStream(distPath).pipe(res);
 	} else {
+		console.log(req.url);
 		file.serve(req, res);
 	}
 }

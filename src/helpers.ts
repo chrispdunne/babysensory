@@ -1,11 +1,15 @@
-export function doubleIfBelowThreshold(num, threshold) {
+export interface PeakItem {
+	interval: number;
+	location: number;
+}
+export function doubleIfBelowThreshold(num: number, threshold: number): number {
 	const newNum = num * 2;
 	if (newNum >= threshold) {
 		return newNum;
 	}
 	return doubleIfBelowThreshold(newNum, threshold);
 }
-export function halveIfAboveThreshold(num, threshold) {
+export function halveIfAboveThreshold(num: number, threshold: number): number {
 	const newNum = num / 2;
 	if (newNum <= threshold) {
 		return newNum;
@@ -13,15 +17,15 @@ export function halveIfAboveThreshold(num, threshold) {
 	return halveIfAboveThreshold(newNum, threshold);
 }
 
-export function roundToTwoPlaces(num) {
+export function roundToTwoPlaces(num: number): number {
 	return Math.round((num + Number.EPSILON) * 100) / 100;
 }
 
-export function roundToThreePlaces(num) {
+export function roundToThreePlaces(num: number): number {
 	return Math.round((num + Number.EPSILON) * 1000) / 1000;
 }
 
-export function getMinMaxValues(array) {
+export function getMinMaxValues(array: Uint8Array): [number, number] {
 	let max = 0;
 	let min = 255;
 	array.forEach((item) => {
@@ -35,9 +39,12 @@ export function getMinMaxValues(array) {
 	return [min, max];
 }
 
-export function getPeakDistances(array, sampleRate) {
+export function getPeakDistances(
+	array: number[],
+	sampleRate: number
+): PeakItem[] {
 	// offset is in frames aka samples
-	const peaksDistanceArray = [];
+	const peaksDistanceArray: PeakItem[] = [];
 	for (let i = 0; i < array.length; i++) {
 		if (i > 0) {
 			const diff = array[i] - array[i - 1];
@@ -50,8 +57,8 @@ export function getPeakDistances(array, sampleRate) {
 	return peaksDistanceArray;
 }
 
-export function groupPeaks(array) {
-	const group = {};
+export function groupPeaks(array: PeakItem[]): Record<number, PeakItem[]> {
+	const group: Record<number, PeakItem[]> = {};
 	array.forEach((item) => {
 		const { interval } = item;
 		if (!group[interval]) {

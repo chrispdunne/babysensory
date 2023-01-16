@@ -5,32 +5,44 @@ import {
 	getMinMaxValues,
 	getPeakDistances,
 	groupPeaks,
-} from "./helpers.js";
+	PeakItem,
+} from "./helpers";
+
+interface BabySensoryData {
+	peaks: number[];
+	bpm: number;
+}
+
+declare global {
+	interface Window {
+		bs: BabySensoryData;
+	}
+}
 
 function ui() {
 	// consts
-	const _threshold = 0.98;
-	const _filterFreq = 350; // default 350
-	const _bufferSize = 32768; // @48khz = 0.682666 seconds
+	const _threshold: number = 0.98;
+	const _filterFreq: number = 350; // default 350
+	const _bufferSize: number = 32768; // @48khz = 0.682666 seconds
 
 	// els
-	const container = document.getElementById("url_input");
-	const _input = document.getElementById("yt_url");
-	const audio = document.getElementById("yt_audio");
-	const bpmDisplay = document.getElementById("bpm");
+	const container = document.getElementById("url_input") as HTMLDivElement;
+	const _input = document.getElementById("yt_url") as HTMLInputElement;
+	const audio = document.getElementById("yt_audio") as HTMLAudioElement;
+	const bpmDisplay = document.getElementById("bpm") as HTMLSpanElement;
 
 	let _isInit = false;
-	let audioContext;
-	let audioSource;
-	let analyser;
+	let audioContext: AudioContext | undefined;
+	let audioSource: MediaElementAudioSourceNode | undefined;
+	let analyser: AnalyserNode | undefined;
 
-	let _sampleRate;
-	let _bufferLengthInSec;
+	let _sampleRate: number;
+	let _bufferLengthInSec: number;
 
 	// update youtube link
-	_input.addEventListener("keyup", (e) => {
-		if (/youtube.com\/watch\?v\=[A-Za-z0-9_]{11}/.test(_input.value)) {
-			container.classList.add("valid");
+	_input?.addEventListener("keyup", (e) => {
+		if (/youtube.com\/watch\?v\=[A-Za-z0-9_]{11}/.test(_input?.value)) {
+			container?.classList.add("valid");
 			audio.src = _input.value;
 		} else {
 			container.classList.remove("valid");
@@ -44,7 +56,7 @@ function ui() {
 	});
 
 	// stop logic
-	let getAudioDataInterval;
+	let getAudioDataInterval: ReturnType<typeof setInterval>;
 	const stopAnalyzer = () => clearInterval(getAudioDataInterval);
 	audio.addEventListener("pause", () => stopAnalyzer());
 
@@ -87,17 +99,17 @@ function ui() {
 		// creates an array of [_bufferSize] elements that can each be a value from 0 to 255
 		var dataArray = new Uint8Array(_bufferSize);
 
-		analyser.getByteTimeDomainData(dataArray);
+		analyser?.getByteTimeDomainData(dataArray);
 
-		const peaksArray = [];
+		const peaksArray: number[] = [];
 		let intervalCount = 0;
-		let mostCommonInterval;
+		let mostCommonInterval: string | undefined;
 
 		/////////////////////
 		// every (buffer length) seconds get more peaks
 		/////////////////////
 		getAudioDataInterval = setInterval(() => {
-			analyser.getByteTimeDomainData(dataArray);
+			analyser?.getByteTimeDomainData(dataArray);
 			const [min, max] = getMinMaxValues(dataArray);
 			const _minVolumeThreshold = max * _threshold;
 			// loop through data array item
@@ -144,21 +156,23 @@ function ui() {
 
 				// get most common interval in seconds
 				mostCommonInterval = Object.keys(peakDistanceCounts).find(
-					(key) => peakDistanceCounts[key].length === highestPeakCount
+					(key: string) =>
+						peakDistanceCounts[Number(key)].length ===
+						highestPeakCount
 				);
 
 				const getPeakLocations = () =>
-					peakDistanceCounts[mostCommonInterval].map(
-						(item) => item.location // get peak location in seconds since start
+					peakDistanceCounts[Number(mostCommonInterval ?? 0)].map(
+						(item: PeakItem) => item.location // get peak location in seconds since start
 					);
 
 				// console.log({
 				// 	mostCommonInterval,
 				// 	pl: getPeakLocations(),
 				// });
-				window.bs_peaks = getPeakLocations();
+				window.bs.peaks = getPeakLocations();
 
-				let bpm = (1 / mostCommonInterval) * 60;
+				let bpm = (1 / Number(mostCommonInterval ?? 1)) * 60;
 
 				if (bpm > 200) {
 					bpm = halveIfAboveThreshold(bpm, 200);
@@ -167,7 +181,7 @@ function ui() {
 					bpm = doubleIfBelowThreshold(bpm, 90);
 				}
 
-				window.bs_bpm = bpm;
+				window.bs.bpm = bpm;
 				bpmDisplay.innerHTML = bpm.toFixed(2);
 			}
 		};
