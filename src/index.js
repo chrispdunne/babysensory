@@ -24,10 +24,9 @@ function youtubeServer(req, res) {
 		stream("http:/" + req.url).pipe(res);
 	} else if (requestUrl.includes("dist")) {
 		const distPath = path.join(__dirname, "..", requestUrl);
-		console.log(distPath);
+
 		return fs.createReadStream(distPath).pipe(res);
 	} else {
-		console.log(req.url);
 		file.serve(req, res);
 	}
 }

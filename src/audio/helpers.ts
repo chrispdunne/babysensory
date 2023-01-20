@@ -57,15 +57,15 @@ export function getPeakDistances(
 	return peaksDistanceArray;
 }
 
-export function groupPeaks(array: PeakItem[]): Record<number, PeakItem[]> {
-	const group: Record<number, PeakItem[]> = {};
+export function groupPeaks(array: PeakItem[]): Record<number, number[]> {
+	const group: Record<number, number[]> = {};
 	array.forEach((item) => {
 		const { interval } = item;
 		if (!group[interval]) {
 			// ex item = {interval: 0.5, location: 23}
-			group[interval] = [item];
+			group[interval] = [item.location];
 		} else {
-			group[interval].push(item);
+			group[interval].push(item.location);
 		}
 	});
 	return group;
