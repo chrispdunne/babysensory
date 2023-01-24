@@ -2,6 +2,7 @@ import animate from "../animate";
 import { _bufferSize, _threshold } from "../const";
 import { getMinMaxValues } from "./helpers";
 import { getBpm } from "./getBpm";
+import fftAnalyzer from "./fftAnalyzer";
 
 export const handlePlay = () => {
 	// audioSource.connect(audioContext.destination); // send unaffected audio source to speakers
@@ -10,6 +11,10 @@ export const handlePlay = () => {
 	var dataArray = new Uint8Array(_bufferSize);
 
 	window.bs.analyser?.getByteTimeDomainData(dataArray);
+
+	// alt fft analyzer ====
+	fftAnalyzer();
+	// ---------------------
 
 	const peaksArray: number[] = [];
 	let intervalCount = 0;
@@ -32,7 +37,7 @@ export const handlePlay = () => {
 				eightBitValue > _minVolumeThreshold
 			) {
 				// document.dispatchEvent(peakEvent);
-				if (peaksArray.length > 99) {
+				if (peaksArray.length > 50) {
 					peaksArray.shift();
 				}
 				peaksArray.push(intervalCount * _bufferSize + i);

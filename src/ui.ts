@@ -7,6 +7,7 @@ interface BabySensoryData {
 	peaks: number[];
 	bpm: number;
 	init: boolean;
+	stopEvent?: Event;
 	audioContext?: AudioContext;
 	audioSource?: MediaElementAudioSourceNode;
 	analyser?: AnalyserNode;
@@ -48,9 +49,11 @@ function ui() {
 	});
 
 	// stop logic
+	const stopEvent = new Event("stopAudio");
 	const stopAnalyzer = () => {
+		window.dispatchEvent(stopEvent);
 		clearInterval(window.bs.intervalId);
-		window.bs = { peaks: [], bpm: 0, init: true };
+		window.bs = { ...window.bs, peaks: [], bpm: 0, init: true };
 	};
 	audio.addEventListener("pause", () => stopAnalyzer());
 }

@@ -21,6 +21,7 @@ function youtubeServer(req, res) {
 	} else if (req.url === "/ping") {
 		res.end("pong");
 	} else if (/youtube/.test(req.url)) {
+		console.log({ res });
 		stream("http:/" + req.url).pipe(res);
 	} else if (requestUrl.includes("dist")) {
 		const distPath = path.join(__dirname, "..", requestUrl);

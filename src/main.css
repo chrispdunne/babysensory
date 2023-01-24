@@ -1,10 +1,21 @@
 body {
 	font-family: sans-serif;
+	margin: 0;
+	padding: 0;
 }
-#canvas {
-	width: 300px;
-	height: 300px;
+
+#controls-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background: rgba(0, 0, 0, 0.2);
+	color: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
+
 #url_input {
 	margin: 20px;
 	max-width: 500px;
@@ -24,8 +35,7 @@ body {
 	right: 0;
 }
 
-#box {
-	width: 100px;
-	height: 100px;
-	background-color: red;
+#canvas_fft {
+	height: 512px;
+	width: 10800px;
 }

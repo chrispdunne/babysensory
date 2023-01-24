@@ -11,23 +11,29 @@
 	</head>
 
 	<body>
-		<p><span id="bpm"></span>bpm</p>
-		<div id="url_input">
-			<label>
-				youtube url:
-				<input id="yt_url" />
-				<small>(e.g. <b>youtube.com/watch?v=3KcOZ2qHz5g</b>)</small>
-			</label>
-		</div>
-		lone youtube.com/watch?v=3KcOZ2qHz5g helix
-		youtube.com/watch?v=n69VprOyAuM
+		<div id="controls-bar">
+			<p><span id="bpm"></span>bpm</p>
+			<div id="url_input">
+				<label>
+					youtube url:
+					<input id="yt_url" />
+					<small>(e.g. <b>youtube.com/watch?v=3KcOZ2qHz5g</b>)</small>
+				</label>
+			</div>
+			<!-- lone youtube.com/watch?v=3KcOZ2qHz5g helix
+			youtube.com/watch?v=n69VprOyAuM -->
 
-		<audio
-			src="youtube.com/watch?v=OnT58cIJSpw"
-			controls
-			preload="metadata"
-			id="yt_audio"
-		></audio>
+			<audio
+				src="youtube.com/watch?v=OnT58cIJSpw"
+				controls
+				preload="metadata"
+				id="yt_audio"
+			></audio>
+		</div>
+
+		<div id="fft">
+			<canvas id="canvas_fft"></canvas>
+		</div>
 
 		<script src="dist/bundle.js"></script>
 	</body>
