@@ -2,8 +2,8 @@ export default function fftAnalyzer() {
 	const { analyser } = window.bs;
 	if (!analyser) return;
 
-	const _resolution = 10;
-	const freqCount = 1024; //analyser.frequencyBinCount; // or 512
+	const _resolution = 5;
+	const freqCount = 512; // this receives the low pass filter audio, so 512HZ is enough. // analyser.frequencyBinCount;
 
 	const canvas = document.querySelector("#canvas_fft") as HTMLCanvasElement;
 	const ctx = canvas.getContext("2d");

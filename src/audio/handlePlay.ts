@@ -13,7 +13,7 @@ export const handlePlay = () => {
 	window.bs.analyser?.getByteTimeDomainData(dataArray);
 
 	// alt fft analyzer ====
-	fftAnalyzer();
+	// fftAnalyzer();
 	// ---------------------
 
 	const peaksArray: number[] = [];
