@@ -3,9 +3,8 @@ import {
 	getPeakDistances,
 	groupPeaks,
 	halveIfAboveThreshold,
-	PeakItem,
 } from "./helpers";
-
+import { PeakItem } from "../types";
 // peaks array has exact location e.g. 12383458345 (dunno... some big number)
 
 // peak distances have PeakItems,

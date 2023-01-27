@@ -1,4 +1,4 @@
-import { Assets, Graphics, Sprite } from "pixi.js";
+import { Graphics } from "pixi.js";
 import { _bufferSize } from "../const";
 import { roundToTwoPlaces } from "../audio/helpers";
 import { isInRange } from "./helpers";
@@ -28,37 +28,9 @@ const animate = async () => {
 
 	console.log("animate pixi . js v2");
 
-	// const texture = await Assets.load("img/lemon.png");
-	//@ATTRIBUTION Image by <a href="https://www.freepik.com/free-vector/flat-design-fruit-collection_13643341.htm#query=fruit&position=8&from_view=search&track=sph">Freepik</a>
-
-	// const lemon = new Sprite(texture);
 	const lemon = await new Lemon().init();
-
-	// const stageW = renderer.width;
-	// const stageH = renderer.height;
-
-	// lemon.x = stageW / 2 - lemon.width / 2;
-	// lemon.y = stageH / 2 - lemon.height / 2;
-
 	stage.addChild(lemon);
-
-	setTimeout(() => {
-		lemon.enter();
-	}, 1000);
-
-	// app.ticker.add((delta) => {
-
-	// });
-	// document.addEventListener("peak", (e) => {
-	// 	lemon.x -= 44;
-	// 	lemon.y -= 44;
-	// 	const beatLength = (60 / (window.bs.bpm ?? 120)) * 1000;
-	// 	const ms = beatLength / 2;
-	// 	setTimeout(() => {
-	// 		lemon.x += 44;
-	// 		lemon.y += 44;
-	// 	}, ms);
-	// });
+	lemon.enter(2);
 
 	const checkBpmAndPeaks = () => {
 		const {

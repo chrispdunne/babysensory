@@ -1,7 +1,5 @@
-export interface PeakItem {
-	interval: number;
-	location: number;
-}
+import { PeakItem } from "../types";
+
 export function doubleIfBelowThreshold(num: number, threshold: number): number {
 	const newNum = num * 2;
 	if (newNum >= threshold) {
