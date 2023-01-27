@@ -30,7 +30,7 @@ const animate = async () => {
 
 	const lemon = await new Lemon().init();
 	stage.addChild(lemon);
-	lemon.enter(2);
+	lemon.enter(4);
 
 	const checkBpmAndPeaks = () => {
 		const {
@@ -64,17 +64,6 @@ const animate = async () => {
 		requestAnimationFrame(checkBpmAndPeaks);
 	};
 	checkBpmAndPeaks();
-
-	const bounceLemon = () => {
-		lemon.x -= 100;
-		lemon.y -= 100;
-		// const beatLength = (60 / (bpm ?? 120)) * 1000;
-		// const ms = beatLength / 2;
-		setTimeout(() => {
-			lemon.x += 100;
-			lemon.y += 100;
-		}, 100);
-	};
 
 	// rarely (every 8 or 16 bars?)
 
