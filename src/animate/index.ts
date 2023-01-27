@@ -2,6 +2,7 @@ import { Assets, Graphics, Sprite } from "pixi.js";
 import { _bufferSize } from "../const";
 import { roundToTwoPlaces } from "../audio/helpers";
 import { isInRange } from "./helpers";
+import { Lemon } from "../characters/lemon";
 
 const drawSquare = () => {
 	const { stage } = window.bs.pixi;
@@ -27,18 +28,23 @@ const animate = async () => {
 
 	console.log("animate pixi . js v2");
 
-	const texture = await Assets.load("img/lemon.png");
+	// const texture = await Assets.load("img/lemon.png");
 	//@ATTRIBUTION Image by <a href="https://www.freepik.com/free-vector/flat-design-fruit-collection_13643341.htm#query=fruit&position=8&from_view=search&track=sph">Freepik</a>
 
-	const lemon = new Sprite(texture);
+	// const lemon = new Sprite(texture);
+	const lemon = await new Lemon().init();
 
-	const stageW = renderer.width;
-	const stageH = renderer.height;
+	// const stageW = renderer.width;
+	// const stageH = renderer.height;
 
-	lemon.x = stageW / 2 - lemon.width / 2;
-	lemon.y = stageH / 2 - lemon.height / 2;
+	// lemon.x = stageW / 2 - lemon.width / 2;
+	// lemon.y = stageH / 2 - lemon.height / 2;
 
 	stage.addChild(lemon);
+
+	setTimeout(() => {
+		lemon.enter();
+	}, 1000);
 
 	// app.ticker.add((delta) => {
 

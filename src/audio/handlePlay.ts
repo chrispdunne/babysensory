@@ -19,6 +19,13 @@ export const handlePlay = () => {
 	const peaksArray: number[] = [];
 	let intervalCount = 0;
 
+	// visualise bytetimedomaindata ==========================================
+	// const canvas = document.querySelector("#canvas_vis") as HTMLCanvasElement;
+	// const ctx = canvas.getContext("2d");
+	// const _visResolution = _bufferSize / 4;
+	// let visCount = 0;
+	// =======================================================================
+
 	/////////////////////
 	// every (buffer length) seconds get more peaks
 	/////////////////////
@@ -30,6 +37,22 @@ export const handlePlay = () => {
 
 		for (var i = 0; i < dataArray.length; i++) {
 			const eightBitValue = dataArray[i];
+
+			// visualise bytetimedomaindata ==========================================
+			// if (i % _visResolution === 0) {
+			// 	const color =
+			// 		_minVolumeThreshold > 100 &&
+			// 		eightBitValue > _minVolumeThreshold
+			// 			? "#fa0"
+			// 			: "#007";
+
+			// 	ctx.fillStyle = color;
+
+			// 	ctx.fillRect(visCount, 0, 1, canvas.height);
+			// 	visCount++;
+			// }
+
+			// =======================================================================
 
 			// do something if audio louder than threshold
 			if (

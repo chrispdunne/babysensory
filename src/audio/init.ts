@@ -1,14 +1,14 @@
 import { Application } from "pixi.js";
 import { _bufferSize, _filterFreq } from "../const";
 
-const testStream = async () => {
-	console.log("testStream");
-	const ytData = await window.fetch("youtube.com/watch?v=3KcOZ2qHz5g");
-	console.log({ ytData });
-};
+// const testStream = async () => {
+// 	console.log("testStream");
+// 	const ytData = await window.fetch("youtube.com/watch?v=3KcOZ2qHz5g");
+// 	console.log({ ytData });
+// };
 
 export const init = () => {
-	testStream();
+	// testStream();
 	if (window.bs.init) return;
 	// setup audio context
 	const audio = document.getElementById("yt_audio") as HTMLAudioElement;
