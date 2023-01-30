@@ -1,8 +1,9 @@
-import { Graphics } from "pixi.js";
+import { AnimatedSprite, Graphics } from "pixi.js";
 import { _bufferSize } from "../const";
 import { roundToTwoPlaces } from "../audio/helpers";
 import { isInRange } from "./helpers";
 import { Lemon } from "../characters/lemon";
+import { spritesheet } from "./spritesheet";
 
 const drawSquare = () => {
 	const { stage } = window.bs.pixi;
@@ -31,6 +32,13 @@ const animate = async () => {
 	const lemon = await new Lemon().init();
 	stage.addChild(lemon);
 	lemon.enter(4);
+
+	// 400 x 367
+	await spritesheet.parse();
+	const testAnim = new AnimatedSprite(spritesheet.animations.apple);
+	testAnim.animationSpeed = 0.1;
+	testAnim.play();
+	stage.addChild(testAnim);
 
 	const checkBpmAndPeaks = () => {
 		const {
