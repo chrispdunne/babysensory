@@ -27,25 +27,23 @@ const fruitFrames = fruits.reduce(
 	{}
 );
 
+const fruitKeys = fruits.reduce(
+	(acc: Record<string, string[]>, fruit): Record<string, any> => {
+		acc[fruit] = [`${fruit}1`, `${fruit}2`, `${fruit}3`];
+		return acc;
+	},
+	{}
+);
+
 const atlasData = {
 	frames: fruitFrames,
-	// {
-	// 	a: {},
-	// 	enemy2: {
-	// 		frame: { x: 400, y: 0, w: 400, h: 367 },
-	// 		sourceSize: { w: 400, h: 367 },
-	// 		spriteSourceSize: { x: 0, y: 0, w: 400, h: 367 },
-	// 	},
-	// },
 	meta: {
 		image: "img/spritesheet.png",
 		format: "RGBA8888",
 		size: { w: 9600, h: 367 },
 		scale: "1",
 	},
-	animations: {
-		apple: ["apple1", "apple2", "apple3"], //array of frames by name
-	},
+	animations: fruitKeys,
 };
 
 console.log({ atlasData });

@@ -29,16 +29,12 @@ const animate = async () => {
 
 	console.log("animate pixi . js v2");
 
-	const lemon = await new Lemon().init();
-	stage.addChild(lemon);
-	lemon.enter(4);
-
 	// 400 x 367
 	await spritesheet.parse();
-	const testAnim = new AnimatedSprite(spritesheet.animations.apple);
-	testAnim.animationSpeed = 0.1;
-	testAnim.play();
-	stage.addChild(testAnim);
+	window.bs.spritesheet = spritesheet;
+
+	const lemon = new Lemon();
+	lemon.play();
 
 	const checkBpmAndPeaks = () => {
 		const {

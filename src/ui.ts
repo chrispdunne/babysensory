@@ -3,26 +3,6 @@ import { _bufferSize, _filterFreq, _threshold } from "./const";
 import { handlePlay } from "./audio/handlePlay";
 import { Application, ICanvas } from "pixi.js";
 
-interface BabySensoryData {
-	peaks: number[];
-	bpm: number;
-	init: boolean;
-	stopEvent?: Event;
-	audioContext?: AudioContext;
-	audioSource?: MediaElementAudioSourceNode;
-	analyser?: AnalyserNode;
-	intervalId?: ReturnType<typeof setInterval>;
-	pixi?: Application<ICanvas>;
-	_sampleRate?: number;
-	_bufferLengthInSec?: number;
-}
-
-declare global {
-	interface Window {
-		bs: BabySensoryData;
-	}
-}
-
 function ui() {
 	// consts
 	window.bs = { peaks: [], bpm: 0, init: false };

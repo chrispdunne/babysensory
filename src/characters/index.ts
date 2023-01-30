@@ -1,20 +1,25 @@
 import gsap from "gsap";
-import { Assets, Sprite, Texture } from "pixi.js";
+import { AnimatedSprite, Resource, Texture } from "pixi.js";
 import { getStartingPosition } from "./helpers";
 
-export class Character extends Sprite {
+export class Character extends AnimatedSprite {
 	name: string;
 
-	constructor(name: string, texture: Texture) {
-		super(texture);
-		const { renderer } = window.bs.pixi;
+	constructor(name: string, animation: Texture<Resource>[]) {
+		super(animation);
+		const { renderer, stage } = window.bs.pixi;
 		const [x, y] = getStartingPosition(renderer.width, renderer.height);
 		this.x = x;
 		this.y = y;
 		this.anchor.set(0.5);
 
+		this.animationSpeed = 0.1;
+
 		this.name = name;
 
+		stage.addChild(this);
+		this.enter(4);
+		// this.play();
 		return this;
 	}
 
