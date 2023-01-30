@@ -45,4 +45,16 @@ export class Character extends AnimatedSprite {
 			}
 		);
 	}
+	blink() {
+		this.gotoAndStop(1);
+		setTimeout(() => {
+			this.gotoAndStop(0);
+		}, 100);
+	}
+	ooh() {
+		this.gotoAndStop(2);
+		setTimeout(() => {
+			this.gotoAndStop(0);
+		}, 1000);
+	}
 }

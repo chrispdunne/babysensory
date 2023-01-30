@@ -34,7 +34,14 @@ const animate = async () => {
 	window.bs.spritesheet = spritesheet;
 
 	const lemon = new Lemon();
-	lemon.play();
+
+	setTimeout(() => {
+		lemon.blink();
+	}, 3000);
+
+	setTimeout(() => {
+		lemon.ooh();
+	}, 4000);
 
 	const checkBpmAndPeaks = () => {
 		const {

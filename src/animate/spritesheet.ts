@@ -27,9 +27,12 @@ const fruitFrames = fruits.reduce(
 	{}
 );
 
-const fruitKeys = fruits.reduce(
+const animations = fruits.reduce(
 	(acc: Record<string, string[]>, fruit): Record<string, any> => {
 		acc[fruit] = [`${fruit}1`, `${fruit}2`, `${fruit}3`];
+		acc[`${fruit}_blink`] = [`${fruit}1`, `${fruit}2`];
+		acc[`${fruit}_ooh`] = [`${fruit}1`, `${fruit}3`];
+
 		return acc;
 	},
 	{}
@@ -43,7 +46,7 @@ const atlasData = {
 		size: { w: 9600, h: 367 },
 		scale: "1",
 	},
-	animations: fruitKeys,
+	animations,
 };
 
 console.log({ atlasData });
