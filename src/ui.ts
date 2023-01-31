@@ -1,7 +1,6 @@
 import { init } from "./audio/init";
 import { _bufferSize, _filterFreq, _threshold } from "./const";
 import { handlePlay } from "./audio/handlePlay";
-import { Application, ICanvas } from "pixi.js";
 
 function ui() {
 	// consts

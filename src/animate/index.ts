@@ -43,6 +43,10 @@ const animate = async () => {
 		lemon.ooh();
 	}, 4000);
 
+	setTimeout(() => {
+		lemon.nodAndSlide(2);
+	}, 6000);
+
 	const checkBpmAndPeaks = () => {
 		const {
 			peaks,

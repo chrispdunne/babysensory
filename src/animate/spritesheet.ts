@@ -49,8 +49,6 @@ const atlasData = {
 	animations,
 };
 
-console.log({ atlasData });
-
 export const spritesheet = new Spritesheet(
 	BaseTexture.from(atlasData.meta.image),
 	atlasData
