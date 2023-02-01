@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import { AnimatedSprite, Resource, Texture } from "pixi.js";
+import nodAndSlide from "../animate/dances/nodAndSlide";
 import { getOffscreenPosition } from "./helpers";
 
 export class Character extends AnimatedSprite {
@@ -79,35 +80,8 @@ export class Character extends AnimatedSprite {
 		this.tweens.bounce = tl;
 	}
 	nodAndSlide(duration: number) {
-		const tl = gsap.timeline();
-
-		tl.fromTo(
-			this.scale,
-			{
-				x: 1,
-				y: 1,
-			},
-			{
-				x: 1.2,
-				y: 1.2,
-				duration: duration / 4,
-				repeat: 4,
-				ease: "power1.inOut",
-				yoyo: true,
-			}
-		);
-		tl.to(this.scale, {
-			x: 1,
-			y: 1,
-			duration: duration / 4,
-			ease: "power1.inOut",
-		});
-		tl.to(this, {
-			x: this.x - 100,
-			duration: duration / 4,
-			ease: "power1.inOut",
-		});
-		this.tweens.nodAndSlide = tl;
+		const timeline = nodAndSlide(this, duration);
+		this.tweens.nodAndSlide = timeline;
 	}
 	blink() {
 		this.gotoAndStop(1);
